@@ -4,7 +4,7 @@ module.exports = (req, res, next) => {
   const token = req.header('Authorization').replace('Bearer ', '');
   
   if (!token) {
-    return res.status(401).send({ error: 'Acesso negado. Nenhum token fornecido.' });
+    return res.status(401).send({ erro: 'Acesso negado. Nenhum token fornecido.' });
   }
 
   try {
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (ex) {
-    res.status(400).send({ error: 'Token inválido.' });
+    res.status(400).send({ erro: 'Token inválido.' });
   }
 };
 

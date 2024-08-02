@@ -12,8 +12,8 @@ app.listen(port, async () => {
   try {
     await sequelize.authenticate();
     console.log('Conectado ao banco de dados!');
-  } catch (error) {
-    console.error('Não foi possível conectar ao banco de dados:', error);
+  } catch (erro) {
+    console.error('Não foi possível conectar ao banco de dados:', erro);
   }
 });
 
@@ -87,7 +87,7 @@ app.post('/usuario', async (req, res) => {
   try {
     const existingUser = await User.findOne({ where: { [Op.or]: [{ cpf }, { email }] } });
     if (existingUser) {
-      return res.status(400).send({ error: 'Usuário com o mesmo CPF ou email já cadastrado.' });
+      return res.status(400).send({ erro: 'Usuário com o mesmo CPF ou email já cadastrado.' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 8);
@@ -95,9 +95,9 @@ app.post('/usuario', async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 
     res.status(201).send({ user, token });
-  } catch (error) {
-    console.error('Erro ao criar usuário:', error);
-    res.status(500).send({ error: 'Erro ao criar usuário.' });
+  } catch (erro) {
+    console.error('Erro ao criar usuário:', erro);
+    res.status(500).send({ erro: 'Erro ao criar usuário.' });
   }
 });
 
@@ -130,19 +130,19 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).send({ error: 'Usuário não encontrado.' });
+      return res.status(400).send({ erro: 'Usuário não encontrado.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).send({ error: 'Senha incorreta.' });
+      return res.status(400).send({ erro: 'Senha incorreta.' });
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
     res.send({ user, token });
-  } catch (error) {
-    console.error('Erro ao realizar login:', error);
-    res.status(500).send({ error: 'Erro ao realizar login.' });
+  } catch (erro) {
+    console.error('Erro ao realizar login:', erro);
+    res.status(500).send({ erro: 'Erro ao realizar login.' });
   }
 });
 
@@ -181,9 +181,9 @@ app.post('/local', auth, async (req, res) => {
   try {
     const location = await Location.create({ name, description, address, coordinates, userId: req.user.id });
     res.status(201).send(location);
-  } catch (error) {
-    console.error('Erro ao criar local:', error);
-    res.status(500).send({ error: 'Erro ao criar local.' });
+  } catch (erro) {
+    console.error('Erro ao criar local:', erro);
+    res.status(500).send({ erro: 'Erro ao criar local.' });
   }
 });
 
@@ -205,9 +205,9 @@ app.get('/local', auth, async (req, res) => {
   try {
     const locations = await Location.findAll({ where: { userId: req.user.id } });
     res.send(locations);
-  } catch (error) {
-    console.error('Erro ao listar locais:', error);
-    res.status(500).send({ error: 'Erro ao listar locais.' });
+  } catch (erro) {
+    console.error('Erro ao listar locais:', erro);
+    res.status(500).send({ erro: 'Erro ao listar locais.' });
   }
 });
 
@@ -237,13 +237,13 @@ app.get('/local/:local_id', auth, async (req, res) => {
   try {
     const location = await Location.findOne({ where: { id: local_id, userId: req.user.id } });
     if (!location) {
-      return res.status(404).send({ error: 'Local não encontrado.' });
+      return res.status(404).send({ erro: 'Local não encontrado.' });
     }
 
     res.send(location);
-  } catch (error) {
-    console.error('Erro ao obter detalhes do local:', error);
-    res.status(500).send({ error: 'Erro ao obter detalhes do local.' });
+  } catch (erro) {
+    console.error('Erro ao obter detalhes do local:', erro);
+    res.status(500).send({ erro: 'Erro ao obter detalhes do local.' });
   }
 });
 
@@ -289,16 +289,16 @@ app.put('/local/:local_id', auth, async (req, res) => {
   try {
     const location = await Location.findOne({ where: { id: local_id, userId: req.user.id } });
     if (!location) {
-      return res.status(404).send({ error: 'Local não encontrado.' });
+      return res.status(404).send({ erro: 'Local não encontrado.' });
     }
 
     Object.keys(updates).forEach(update => location[update] = updates[update]);
     await location.save();
 
     res.send(location);
-  } catch (error) {
-    console.error('Erro ao atualizar local:', error);
-    res.status(500).send({ error: 'Erro ao atualizar local.' });
+  } catch (erro) {
+    console.error('Erro ao atualizar local:', erro);
+    res.status(500).send({ erro: 'Erro ao atualizar local.' });
   }
 });
 
@@ -328,14 +328,14 @@ app.delete('/local/:local_id', auth, async (req, res) => {
   try {
     const location = await Location.findOne({ where: { id: local_id, userId: req.user.id } });
     if (!location) {
-      return res.status(404).send({ error: 'Local não encontrado.' });
+      return res.status(404).send({ erro: 'Local não encontrado.' });
     }
 
     await location.destroy();
-    res.send({ message: 'Local deletado com sucesso.' });
-  } catch (error) {
-    console.error('Erro ao deletar local:', error);
-    res.status(500).send({ error: 'Erro ao deletar local.' });
+    res.send({ mensagem: 'Local deletado com sucesso.' });
+  } catch (erro) {
+    console.error('Erro ao deletar local:', erro);
+    res.status(500).send({ erro: 'Erro ao deletar local.' });
   }
 });
 
@@ -367,22 +367,22 @@ app.get('/local/:local_id/maps', auth, async (req, res) => {
   try {
     const location = await Location.findOne({ where: { id: local_id, userId: req.user.id } });
     if (!location) {
-      return res.status(404).send({ error: 'Local não encontrado.' });
+      return res.status(404).send({ erro: 'Local não encontrado.' });
     }
 
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location.address)}&format=json&limit=1`;
     const response = await axios.get(url);
     if (response.data.length === 0) {
-      return res.status(404).send({ error: 'Endereço não encontrado no OpenStreetMap.' });
+      return res.status(404).send({ erro: 'Endereço não encontrado no OpenStreetMap.' });
     }
 
     const { lat, lon } = response.data[0];
     const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
 
     res.send({ googleMapsLink });
-  } catch (error) {
-    console.error('Erro ao gerar link do Google Maps:', error);
-    res.status(500).send({ error: 'Erro ao gerar link do Google Maps.' });
+  } catch (erro) {
+    console.error('Erro ao gerar link do Google Maps:', erro);
+    res.status(500).send({ erro: 'Erro ao gerar link do Google Maps.' });
   }
 });
 
@@ -410,29 +410,20 @@ app.delete('/usuario/:id', auth, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Verificar se o usuário possui locais associados
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).send({ error: 'Usuário não encontrado.' });
+      return res.status(404).send({ erro: 'Usuário não encontrado.' });
     }
 
     const locations = await Location.findAll({ where: { userId: id } });
     if (locations.length > 0) {
-      return res.status(400).send({ error: 'Usuário não pode ser deletado, pois possui locais associados.' });
+      return res.status(400).send({ erro: 'Usuário não pode ser deletado, pois possui locais associados.' });
     }
 
     await user.destroy();
-    res.status(200).send({ message: 'Usuário deletado com sucesso.' });
-  } catch (error) {
-    console.error('Erro ao deletar usuário:', error);
-    res.status(500).send({ error: 'Erro ao deletar usuário.' });
+    res.status(200).send({ mensagem: 'Usuário deletado com sucesso.' });
+  } catch (erro) {
+    console.error('Erro ao deletar usuário:', erro);
+    res.status(500).send({ erro: 'Erro ao deletar usuário.' });
   }
 });
-
-
-
-
-
-
-
-
