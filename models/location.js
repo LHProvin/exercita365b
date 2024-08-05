@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     coordinates: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   }, {
     sequelize,
