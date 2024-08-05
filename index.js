@@ -15,8 +15,8 @@ app.use(helmet());
 app.use(cors());
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100 // Limita cada IP a 100 solicitações por janela
+  windowMs: 15 * 60 * 1000, 
+  max: 100 
 });
 app.use(limiter);
 app.get('/', (req, res) => {
@@ -61,8 +61,6 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-
 
 /**
  * @swagger
@@ -113,7 +111,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *         description: Erro no cadastro do usuário.
  */
 
-
 app.post('/usuario', [
   check('name').not().isEmpty().withMessage('Name is required.'),
   check('gender').isIn(['M', 'F']).withMessage('Gender must be either M or F.'),
@@ -143,9 +140,6 @@ app.post('/usuario', [
   }
 });
 
-
-
-
 /**
  * @swagger
  * /login:
@@ -174,7 +168,6 @@ app.post('/usuario', [
  *         description: Erro no login.
  */
 
-
 app.post('/login', [
   check('email').isEmail().normalizeEmail(),
   check('password').isLength({ min: 8 })
@@ -200,8 +193,6 @@ app.post('/login', [
     res.status(500).send({ erro: 'Erro ao realizar login.' });
   }
 });
-
-
 
 /**
  * @swagger
@@ -260,7 +251,6 @@ app.post('/local', [
     res.status(500).send({ erro: 'Erro ao criar local.' });
   }
 });
-
 
 /**
  * @swagger
@@ -499,7 +489,6 @@ app.delete('/local/:local_id', auth, async (req, res) => {
  */
 
 const axios = require('axios');
-
 app.get('/local/:local_id/maps', auth, async (req, res) => {
   const { local_id } = req.params;
 
@@ -524,7 +513,6 @@ app.get('/local/:local_id/maps', auth, async (req, res) => {
     res.status(500).send({ erro: 'Erro ao gerar link do Google Maps.' });
   }
 });
-
 
 /**
  * @swagger

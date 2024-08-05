@@ -26,7 +26,7 @@ module.exports = {
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
-      // Adicione mais usuários conforme necessário
+      
     ], {});
   },
 
